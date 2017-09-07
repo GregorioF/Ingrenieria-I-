@@ -1,0 +1,9 @@
+C:\Users\Gregorio\Desktop\Ing 1\01-CodigoRepetido\C#\Ejercicio\Ejercicio\obj\Debug\IdiomExercise.csprojResolveAssemblyReference.cache
+C:\Users\Gregorio\Desktop\Ing 1\01-CodigoRepetido\C#\Ejercicio\Ejercicio\obj\Debug\IdiomExercise.csproj.CoreCompileInputs.cache
+C:\Users\Gregorio\Desktop\Ing 1\01-CodigoRepetido\C#\Ejercicio\Ejercicio\obj\Debug\IdiomExercise.dll
+C:\Users\Gregorio\Desktop\Ing 1\01-CodigoRepetido\C#\Ejercicio\Ejercicio\obj\Debug\IdiomExercise.pdb
+C:\Documents and Settings\hernan\Mis documentos\Visual Studio 2010\Projects\C1-IdiomExercise\bin\Debug\IdiomExercise.dll
+C:\Documents and Settings\hernan\Mis documentos\Visual Studio 2010\Projects\C1-IdiomExercise\bin\Debug\IdiomExercise.pdb
+C:\Users\Virtual Developer\Downloads\ing\c#\Ejercicio\obj\Debug\IdiomExercise.csprojResolveAssemblyReference.cache
+C:\Users\Virtual Developer\Downloads\ing\c#\Ejercicio\obj\Debug\IdiomExercise.dll
+C:\Users\Virtual Developer\Downloads\ing\c#\Ejercicio\obj\Debug\IdiomExercise.pdb
