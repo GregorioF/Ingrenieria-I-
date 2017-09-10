@@ -30,11 +30,21 @@
       <file leaf-file-name="NumeroTest.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/numero/NumeroTest.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
-              <caret line="273" column="8" lean-forward="false" selection-start-line="273" selection-start-column="8" selection-end-line="273" selection-end-column="8" />
+            <state relative-caret-position="263">
+              <caret line="379" column="0" lean-forward="false" selection-start-line="379" selection-start-column="0" selection-end-line="379" selection-end-column="0" />
               <folding>
                 <element signature="e#362#377#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".project" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.project">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -394,51 +404,50 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 22m 48s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 20h 47m 21s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 23m 57s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 20h 48m 42s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 24m 19s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 20h 50m 40s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 32m 34s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 20h 51m 06s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 39m 18s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 20h 51m 28s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 39m 40s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 20h 51m 31s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 40m 04s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 20h 53m 19s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 40m 44s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 20h 53m 20s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 41m 06s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 21h 57m 42s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
-    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 18h 41m 12s.xml">
+    <history-entry file="Unittests_for_NumeroTest_NumeroTest - 2017.09.09 at 21h 58m 44s.xml">
       <configuration name="Unittests for NumeroTest.NumeroTest" configurationId="tests" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="696" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.103125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32820514" sideWeight="0.503125" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32761577" sideWeight="0.496875" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32761577" sideWeight="0.496875" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24356775" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24356775" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -455,18 +464,21 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/numero/NumeroTest.py</url>
-          <line>148</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-      <option name="time" value="3" />
+      <option name="time" value="9" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/numero/NumeroTest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#362#377#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/numero/NumeroTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -494,14 +506,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.project">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Python27/Lib/unittest/case.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="138">
@@ -510,10 +514,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.project">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/numero/NumeroTest.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="273" column="8" lean-forward="false" selection-start-line="273" selection-start-column="8" selection-end-line="273" selection-end-column="8" />
+        <state relative-caret-position="263">
+          <caret line="379" column="0" lean-forward="false" selection-start-line="379" selection-start-column="0" selection-end-line="379" selection-end-column="0" />
           <folding>
             <element signature="e#362#377#0" expanded="true" />
           </folding>
