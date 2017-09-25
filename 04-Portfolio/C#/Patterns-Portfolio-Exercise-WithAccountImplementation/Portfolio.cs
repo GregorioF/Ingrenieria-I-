@@ -20,7 +20,7 @@ namespace Patterns_Portfolio_Exercise_WithAccountImplementation
 
     	public static Portfolio createWith(List<SummarizingAccount> summarizingAccounts) {
             bool hayDuplicados = false;
-            summarizingAccounts.ForEach( account => hayDuplicados = hayDuplicados || summarizingAccounts.Where(a => a.manages(account)).ToList().Count > 1);
+            summarizingAccounts.ForEach( account1 => hayDuplicados = hayDuplicados || summarizingAccounts.Where(account2 => account2.manages(account1)).ToList().Count > 1);
 
             if (hayDuplicados) throw new Exception(ACCOUNT_ALREADY_MANAGED);
 
