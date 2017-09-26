@@ -1,0 +1,17 @@
+H:\Documents\10pines-documents\Capacitacion\C2 - Diseño Avanzado de Software con Objetos II\C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\bin\Debug\C2-PortfolioTreePrinter-Exercise.dll
+H:\Documents\10pines-documents\Capacitacion\C2 - Diseño Avanzado de Software con Objetos II\C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\bin\Debug\C2-PortfolioTreePrinter-Exercise.pdb
+H:\Documents\10pines-documents\Capacitacion\C2 - Diseño Avanzado de Software con Objetos II\C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\ResolveAssemblyReference.cache
+H:\Documents\10pines-documents\Capacitacion\C2 - Diseño Avanzado de Software con Objetos II\C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.dll
+H:\Documents\10pines-documents\Capacitacion\C2 - Diseño Avanzado de Software con Objetos II\C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.pdb
+C:\Documents and Settings\hernan\Mis documentos\Visual Studio 2010\Projects\C2-PortfolioTreePrinter-Exercise.dll
+C:\Documents and Settings\hernan\Mis documentos\Visual Studio 2010\Projects\C2-PortfolioTreePrinter-Exercise.pdb
+H:\Documents\10pines-documents\Capacitacion\C2-C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.csprojResolveAssemblyReference.cache
+H:\Documents\10pines-documents\Capacitacion\C2-C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.dll
+H:\Documents\10pines-documents\Capacitacion\C2-C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.pdb
+H:\Capacitacion\C2 - Diseño Avanzado de Software con Objetos II\C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.csprojResolveAssemblyReference.cache
+H:\Capacitacion\C2 - Diseño Avanzado de Software con Objetos II\C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.dll
+H:\Capacitacion\C2 - Diseño Avanzado de Software con Objetos II\C#Projects\C2-PortfolioTreePrinter-Exercise\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.pdb
+C:\Users\Gregorio\Ing 1\05-PortfolioTreePrinter\C#\Ejercicio\Ejercicio\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.csprojResolveAssemblyReference.cache
+C:\Users\Gregorio\Ing 1\05-PortfolioTreePrinter\C#\Ejercicio\Ejercicio\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.csproj.CoreCompileInputs.cache
+C:\Users\Gregorio\Ing 1\05-PortfolioTreePrinter\C#\Ejercicio\Ejercicio\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.dll
+C:\Users\Gregorio\Ing 1\05-PortfolioTreePrinter\C#\Ejercicio\Ejercicio\C2-PortfolioTreePrinter-Exercise\obj\Debug\C2-PortfolioTreePrinter-Exercise.pdb
