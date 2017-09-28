@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using C2_PortfolioTreePrinter_Exercise.Extensiones;
 
 namespace C2_PortfolioTreePrinter_Exercise
 {
@@ -281,7 +282,7 @@ namespace C2_PortfolioTreePrinter_Exercise
 
         private List<String> accountSummaryLines(ReceptiveAccount fromAccount)
         {
-            throw new Exception("Implement");
+            return fromAccount.transactions().Select(account=>account.Description()).ToList();
         }
 
         [TestMethod]
@@ -302,7 +303,7 @@ namespace C2_PortfolioTreePrinter_Exercise
 
         private double accountTransferNet(ReceptiveAccount account)
         {
-            throw new Exception("Implement");
+            return account.transactions().Sum(transaction => transaction.AfectNetBy());
         }
 
         [TestMethod]
@@ -322,7 +323,7 @@ namespace C2_PortfolioTreePrinter_Exercise
 
         private double investmentNet(ReceptiveAccount account)
         {
-            throw new Exception("Implement");
+            return account.transactions().Sum(transaction => transaction.AfectInvestmentBy());
         }
 
         [TestMethod]
@@ -342,7 +343,7 @@ namespace C2_PortfolioTreePrinter_Exercise
 
         private double investmentEarnings(ReceptiveAccount account)
         {
-            throw new Exception("Implement");
+            return account.transactions().Sum(transaction => transaction.AfectInvestmentEarningBy());
         }
 
         [TestMethod]

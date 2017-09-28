@@ -36,5 +36,10 @@ namespace C2_PortfolioTreePrinter_Exercise
         {
             return _transfer;
         }
+
+        public string Description()
+        {
+            return "Transferencia por " + ((double)_transfer.value()).ToString() + ".0";
+        }
     }
 }

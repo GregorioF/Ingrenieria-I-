@@ -34,5 +34,10 @@ namespace C2_PortfolioTreePrinter_Exercise
         {
             return m_value;
         }
+
+        public string Description()
+        {
+            return "Depósito por " + ((double)m_value).ToString() + ".0";
+        }
     }
 }

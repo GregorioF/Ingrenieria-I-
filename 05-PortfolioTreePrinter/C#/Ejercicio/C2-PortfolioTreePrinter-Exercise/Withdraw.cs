@@ -31,5 +31,10 @@ namespace C2_PortfolioTreePrinter_Exercise
         {
             return m_value * -1;
         }
+
+        public string Description()
+        {
+            return "Extracción por "+ ((double)m_value).ToString() + ".0";
+        }
     }
 }

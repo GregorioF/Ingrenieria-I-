@@ -10,5 +10,7 @@ namespace C2_PortfolioTreePrinter_Exercise
         double value();
 
         double AfectAccountBalanceIn();
+
+        string Description();
     }
 }

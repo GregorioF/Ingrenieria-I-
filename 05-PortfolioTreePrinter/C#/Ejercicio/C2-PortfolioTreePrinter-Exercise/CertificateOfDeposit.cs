@@ -8,41 +8,55 @@ namespace C2_PortfolioTreePrinter_Exercise
     class CertificateOfDeposit : AccountTransaction
     {
 
+        private double _value;
+        private int _numberOfDays;
+        private double _tna;
+
         public CertificateOfDeposit(double value, int numberOfDays, double tna)
         {
-            throw new Exception();
+            _value = value;
+            _numberOfDays = numberOfDays;
+            _tna = tna;
         }
 
         public double value()
         {
-            throw new Exception();
+            return _value;
         }
 
         public static CertificateOfDeposit registerFor(double value, int numberOfDays, double tna,
                 ReceptiveAccount account)
         {
+            CertificateOfDeposit certificadoDeDeposito = new CertificateOfDeposit(value, numberOfDays,tna);
 
-            throw new Exception();
+            account.register(certificadoDeDeposito);
+
+            return certificadoDeDeposito;
         }
 
         public double earnings()
         {
-            throw new Exception();
+            return _value * (_tna / 360) * _numberOfDays;
         }
 
         public int numberOfDays()
         {
-            throw new Exception();
+            return _numberOfDays;
         }
 
         public double tna()
         {
-            throw new Exception();
+            return _tna;
         }
 
         public double AfectAccountBalanceIn()
         {
-            throw new NotImplementedException();
+            return _value*-1;
+        }
+
+        public string Description()
+        {
+            return "Plazo fijo por " + _value.ToString() +".0 durante "+ _numberOfDays.ToString() +" días a una tna de " + _tna.ToString();
         }
     }
 }

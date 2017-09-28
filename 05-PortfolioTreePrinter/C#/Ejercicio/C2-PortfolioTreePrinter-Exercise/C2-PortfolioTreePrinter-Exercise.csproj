@@ -48,6 +48,8 @@
     <Compile Include="AccountTransaction.cs" />
     <Compile Include="CertificateOfDeposit.cs" />
     <Compile Include="DepositTransferLeg.cs" />
+    <Compile Include="Extensiones\InvestemtsExtensions.cs" />
+    <Compile Include="Extensiones\TransfersExtensions.cs" />
     <Compile Include="WithdrawTransferLeg.cs" />
     <Compile Include="Deposit.cs" />
     <Compile Include="Portfolio.cs" />
