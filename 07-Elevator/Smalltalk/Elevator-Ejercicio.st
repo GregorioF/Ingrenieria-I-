@@ -440,13 +440,13 @@ Object subclass: #ElevatorController
 	poolDictionaries: ''
 	category: 'Elevator-Ejercicio'!
 
-!ElevatorController methodsFor: 'initialization' stamp: 'AS 10/2/2017 17:16:24'!
+!ElevatorController methodsFor: 'initialization' stamp: 'AS 10/12/2017 09:34:08'!
 iniciar
 	state := 'Idle'.
 	cabinState := 'Stopped'.
 	cabinDoorState := 'Opened'.
 	cabinFloorNumber := 0.
-	floorsToGo := nil.
+	floorsToGo := SharedQueue new.
 	^ self! !
 
 
@@ -457,10 +457,11 @@ cabinDoorClosed
 	cabinDoorState:='Closed'.
 	 ^ self! !
 
-!ElevatorController methodsFor: 'interacting' stamp: 'AS 10/2/2017 18:29:16'!
+!ElevatorController methodsFor: 'interacting' stamp: 'AS 10/12/2017 09:41:10'!
 cabinDoorOpened
 
-	state:='Idle'.
+	floorsToGo size =0 ifTrue:[
+		state:='Idle'.] ifFalse:[state:='Working'.].
 	cabinState:='Stopped'.
 	cabinDoorState:='Opened'.
 	 ^ self! !
@@ -474,12 +475,19 @@ cabinOnFloor: aFloor
 	cabinFloorNumber:=aFloor.
 	^ self! !
 
-!ElevatorController methodsFor: 'interacting' stamp: 'AS 10/2/2017 18:22:41'!
+!ElevatorController methodsFor: 'interacting' stamp: 'AS 10/12/2017 12:06:36'!
+closeCabinDoor
+
+	(self isWorking and: (self isCabinDoorOpened)) ifTrue:[cabinDoorState:='Closing'.].
+	^self! !
+
+!ElevatorController methodsFor: 'interacting' stamp: 'AS 10/12/2017 09:33:41'!
 goUpPushedFromFloor: aFloor
 
+	self isWorking ifTrue: [ floorsToGo nextPut: aFloor  ] ifFalse:[
 	state:='Working'.
 	cabinState:='Stopped'.
-	cabinDoorState:='Closing'.
+	cabinDoorState:='Closing'.].
 	^ self! !
 
 !ElevatorController methodsFor: 'interacting' stamp: 'AS 10/2/2017 18:43:49'!
@@ -487,6 +495,17 @@ openCabinDoor
 
 	self isCabinMoving ifFalse: [self isCabinDoorClosing ifTrue: [cabinDoorState:='Opening']].
 	 ^ self! !
+
+!ElevatorController methodsFor: 'interacting' stamp: 'AS 10/12/2017 10:05:49'!
+waitForPeopleTimedOut
+
+	floorsToGo size > 0 ifTrue: [
+		state:='Working'.
+		cabinState:='Stopped'.
+		cabinDoorState:='Closing'.
+		floorsToGo next.].
+	
+	^self! !
 
 
 !ElevatorController methodsFor: 'testing' stamp: 'AS 10/2/2017 16:52:37'!
@@ -523,6 +542,11 @@ isCabinMoving
 isCabinStopped
 
 	^ cabinState = 'Stopped'! !
+
+!ElevatorController methodsFor: 'testing' stamp: 'AS 10/12/2017 09:37:20'!
+isCabinWaitingForPeople
+
+	^ floorsToGo size > 0.! !
 
 !ElevatorController methodsFor: 'testing' stamp: 'AS 10/2/2017 16:48:13'!
 isIdle
