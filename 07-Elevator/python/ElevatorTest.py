@@ -1,4 +1,4 @@
-#
+
 # Developed by 10Pines SRL
 # License: 
 # This work is licensed under the 
@@ -11,91 +11,411 @@ import unittest
 from enum import Enum
 
 
-class DoorStateEnum(Enum):
-    close = 1
-    opening = 2
-    oppen = 3
-    closing = 4
-
-class CabineStateEnum(Enum):
-    stopped = 1
-    moving = 2
-    waitForPeople = 3
-
-class ElevatorController:
-    def __init__(self):
-        self._nextFloors = []
-        self._actualFloor = 0 
-        self._isIdle = True
-        self._isStoped = True;
-        self._stateOfDoor = DoorStateEnum.oppen
-        self._stateOfCabine = CabineStateEnum.stopped
-
-    def isIdle(self):
-        return self._isIdle
-    
-    def isWorking(self):
-        return not self._isIdle
+class Door:
 
     def isCabinDoorOpened(self):
-        return self._stateOfDoor == DoorStateEnum.oppen
+        pass
 
     def isCabinDoorOpening(self):
-        return self._stateOfDoor == DoorStateEnum.opening
+        pass
 
     def isCabinDoorClosed(self):
-        return self._stateOfDoor == DoorStateEnum.close
+        pass
 
     def isCabinDoorClosing(self):
-        return self._stateOfDoor == DoorStateEnum.closing
+        pass
+    
+    def doorStarClosing(self):
+    	return DoorClosing()
+    	
+
+    def doorStarOpening(self):
+        return DoorOpening()
+
+    def doorClose(self):
+    	return DoorClose()
+
+    def doorOpen(self):
+    	return DoorOpen()
+
+
+
+
+
+class Cabine(object):
+
+    def __init__(self):
+        self._door = DoorOpen()
+
+    def isCabinStopped(self):
+        pass
+
+    def isCabinMoving(self):
+        pass
+
+    def isCabinWaitingForPeople(self):
+        pass
+
+    def isCabinDoorOpened(self):
+        return self._door.isCabinDoorOpened()
+
+    def isCabinDoorOpening(self):
+        return self._door.isCabinDoorOpening()
+
+    def isCabinDoorClosed(self):
+        return self._door.isCabinDoorClosed()
+
+    def isCabinDoorClosing(self):
+        return self._door.isCabinDoorClosing()
+
+    def waitForPeopleTimedOut(self):
+
+        self._door = DoorClosing()
+
+    def goingUp(self):
+        self._door = self._door.goingUp()
+        return self
+
+    def cabinDoorClosed(self):
+        res =  CabineInMovement(self._door)
+        res._door = DoorClose()
+        return res
+
+
+
+
+
+class DoorOpening(Door):
+
+    def isCabinDoorOpened(self):
+        return False
+
+    def isCabinDoorOpening(self):
+        return True
+
+    def isCabinDoorClosed(self):
+        return False
+
+    def isCabinDoorClosing(self):
+        return False
+
+    def goingUp(self):
+    	return DoorClosing()
+
+
+class DoorOpen(Door):
+
+    def isCabinDoorOpened(self):
+        return True
+
+    def isCabinDoorOpening(self):
+        return False
+
+    def isCabinDoorClosed(self):
+        return False
+
+    def isCabinDoorClosing(self):
+        return False
+
+    def goingUp(self):
+    	return DoorClosing()
+
+
+
+class DoorClosing(Door):
+
+    def isCabinDoorOpened(self):
+        return False
+
+    def isCabinDoorOpening(self):
+        return False
+
+    def isCabinDoorClosed(self):
+        return False
+
+    def isCabinDoorClosing(self):
+        return True
+
+    def goingUp(self):
+    	return self
+
+
+class DoorClose(Door):
+
+    def isCabinDoorOpened(self):
+        return False
+
+    def isCabinDoorOpening(self):
+        return False
+
+    def isCabinDoorClosed(self):
+        return True
+
+    def isCabinDoorClosing(self):
+        return False
+
+    def goingUp(self):
+    	return self
+
+
+
+
+
+class CabineInMovement(Cabine):
+    def __init__(self, aDoor):
+        super(self.__class__, self).__init__()
+        self._door = aDoor
+
+    def isCabinStopped(self):
+        return False
+
+    def isCabinMoving(self):
+        return True
+
+    def isCabinWaitingForPeople(self):
+        return False
+
+    def StopAndOpenDoor(self):
+    	self._door = self._door.doorOpen()
+        return CabineStoped(self._door)
+        
+
+class CabineStoped(Cabine):
+    def __init__(self, aDoor):
+        super(self.__class__, self).__init__()
+        self._door = aDoor
+
+    def isCabinStopped(self):
+        return True
+
+    def isCabinMoving(self):
+        return False
+
+    def isCabinWaitingForPeople(self):
+        return False
+
+    def openCabinDoor(self):
+        self._door = self._door.doorStarOpening()
+        return self
+
+
+
+class CabineWaitingForPeople(Cabine):
+    def __init__(self, aDoor):
+        super(self.__class__, self).__init__()
+        self._door = aDoor
+
+    def isCabinStopped(self):
+        return False
+
+    def isCabinMoving(self):
+        return False
+
+    def isCabinWaitingForPeople(self):
+        return True
+
+
+
+
+class ElevatorControllerIdle:
+
+    def __init__(self):
+        self._actualFloor = 0
+        self._cabine = CabineStoped(DoorOpen())
+
+    def isIdle(self):
+        return True
+
+    def isWorking(self):
+        return False
+
+    def isCabinDoorOpened(self):
+        return self._cabine.isCabinDoorOpened()
+
+    def isCabinDoorOpening(self):
+        return self._cabine.isCabinDoorOpening()
+
+    def isCabinDoorClosed(self):
+        return self._cabine.isCabinDoorClosed()
+
+    def isCabinDoorClosing(self):
+        return self._cabine.isCabinDoorClosing()
 
     def cabinFloorNumber(self):
         return self._actualFloor
 
     def isCabinStopped(self):
-        return self._stateOfCabine == CabineStateEnum.stopped
+        return self._cabine.isCabinStopped()
 
     def isCabinMoving(self):
-        return self._stateOfCabine == CabineStateEnum.moving
+        return self._cabine.isCabinMoving()
 
     def isCabinWaitingForPeople(self):
-        return self._stateOfCabine == CabineStateEnum.waitForPeople
+        return self._cabine.isCabinWaitingForPeople()
+
+    def cabinFloorNumber(self):
+        return self._actualFloor
+
+    def isCabinStopped(self):
+        return self._cabine.isCabinStopped()
+
+    def isCabinMoving(self):
+        return self._cabine.isCabinMoving()
+
+    def isCabinWaitingForPeople(self):
+        return self._cabine.isCabinWaitingForPeople()
 
     def goUpPushedFromFloor(self, aFloorNumber):
+        self._cabine = self._cabine.goingUp()
+        return ElevatorControlleWorking(self, aFloorNumber)
 
-        if self._stateOfDoor == open or self._stateOfDoor.opening : 
-            self._stateOfDoor = DoorStateEnum.closing
-        self._isIdle = False
+    def cabinDoorClosed(self):
+        return self
+
+    def openCabinDoor(self):
+        return self
+
+
+
+
+
+
+class ElevatorControlleWorking:
+
+    def __init__(self, OtherElevatorControler, aFloorToGo):
+        self._actualFloor = OtherElevatorControler._actualFloor
+        self._cabine = OtherElevatorControler._cabine
+        self._nextFloors = [aFloorToGo]
+
+    def isIdle(self):
+        return False
+
+    def isWorking(self):
+        return not True
+
+    def isCabinDoorOpened(self):
+        return self._cabine.isCabinDoorOpened()
+
+    def isCabinDoorOpening(self):
+        return self._cabine.isCabinDoorOpening()
+
+    def isCabinDoorClosed(self):
+        return self._cabine.isCabinDoorClosed()
+
+    def isCabinDoorClosing(self):
+        return self._cabine.isCabinDoorClosing()
+
+    def cabinFloorNumber(self):
+        return self._actualFloor
+
+    def isCabinStopped(self):
+        return self._cabine.isCabinStopped()
+
+    def isCabinMoving(self):
+        return self._cabine.isCabinMoving()
+
+    def isCabinWaitingForPeople(self):
+        return self._cabine.isCabinWaitingForPeople()
+
+    def cabinFloorNumber(self):
+        return self._actualFloor
+
+    def isCabinStopped(self):
+        return self._cabine.isCabinStopped()
+
+    def isCabinMoving(self):
+        return self._cabine.isCabinMoving()
+
+    def isCabinWaitingForPeople(self):
+        return self._cabine.isCabinWaitingForPeople()
+
+    def goUpPushedFromFloor(self, aFloorNumber):
+        self._cabine = self._cabine.goingUp()
         self._nextFloors.append(aFloorNumber)
+        return self
 
     def cabinOnFloor(self, aFloorNumber):
         self._actualFloor = aFloorNumber
         if aFloorNumber == self._nextFloors[0]:
-            self._stateOfCabine = CabineStateEnum.stopped
-            self._stateOfDoor = DoorStateEnum.opening
+            self._cabine = self._cabine.StopAndOpenDoor()
             self._nextFloors.remove(aFloorNumber)
+        return self
 
     def cabinDoorClosed(self):
-        self._stateOfDoor = DoorStateEnum.close
-        self._stateOfCabine = CabineStateEnum.moving
+        self._cabine = self._cabine.cabinDoorClosed()
+        return self
 
     def openCabinDoor(self):
-        if self._stateOfCabine == CabineStateEnum.stopped and self._stateOfDoor != DoorStateEnum.oppen:
-            self._stateOfDoor = DoorStateEnum.opening
+        self._cabine.openCabinDoor()
+        return self
 
     def cabinDoorOpened(self):
-        self._isIdle = len(self._nextFloors) == 0
-        if not self._isIdle :
-            self._stateOfCabine = CabineStateEnum.waitForPeople
-        self._stateOfDoor = DoorStateEnum.oppen
+        if not len(self._nextFloors) == 0 :
+            self._cabine = _cabine.cabineStartWaitForPeople
+
+
+
+
+
+class ElevatorController:
+    def __init__(self):
+        self._elevatorController = ElevatorControllerIdle()
+
+    def isIdle(self):
+        return self._elevatorController.isIdle()
+    
+    def isWorking(self):
+        return not self._elevatorController.isWorking()
+
+    def isCabinDoorOpened(self):
+
+        return self._elevatorController.isCabinDoorOpened()
+
+    def isCabinDoorOpening(self):
+        return self._elevatorController.isCabinDoorOpening()
+
+    def isCabinDoorClosed(self):
+        return self._elevatorController.isCabinDoorClosed()
+
+    def isCabinDoorClosing(self):
+        return self._elevatorController.isCabinDoorClosing()
+
+    def cabinFloorNumber(self):
+        return self._elevatorController.cabinFloorNumber()
+
+    def isCabinStopped(self):
+        return self._elevatorController.isCabinStopped()
+
+    def isCabinMoving(self):
+        return self._elevatorController.isCabinMoving()
+
+    def isCabinWaitingForPeople(self):
+        return self._elevatorController.isCabinWaitingForPeople()
+
+    def goUpPushedFromFloor(self, aFloorNumber):
+
+        self._elevatorController = self._elevatorController.goUpPushedFromFloor(aFloorNumber)
+
+    def cabinOnFloor(self, aFloorNumber):
+        self._elevatorController = self._elevatorController.cabinOnFloor(aFloorNumber)
+
+    def cabinDoorClosed(self):
+        self._elevatorController = self._elevatorController.cabinDoorClosed()
+
+    def openCabinDoor(self):
+        self._elevatorController.openCabinDoor()
+
+    def cabinDoorOpened(self):
+        self._elevatorController = self._elevatorController.cabinDoorOpened()
+
 
     def waitForPeopleTimedOut(self):
-        self._stateOfDoor = DoorStateEnum.closing
-        self._stateOfCabine = CabineStateEnum.stopped
+        self._cabine.waitForPeopleTimedOut()
+
 
     def closeCabinDoor(self):
-        if not self._stateOfDoor == _stateOfDoor.oppen :
-            if not self._isIdle:
+        if not self._stateOfDoor == DoorStateEnum.close:
+            if not self._isIdle and not self._stateOfDoor == DoorStateEnum.opening:
                 self._stateOfDoor = DoorStateEnum.closing
             self._stateOfCabine = CabineStateEnum.stopped
 
@@ -145,7 +465,7 @@ class ElevatorTest(unittest.TestCase):
         self.assertFalse(elevatorController.isCabinDoorOpening())
         self.assertFalse(elevatorController.isCabinDoorClosing())
         self.assertTrue(elevatorController.isCabinDoorClosed())
-    
+
     def test04CabinStopsAndStartsOpeningDoorWhenGetsToDestination(self):
         elevatorController = ElevatorController()
     
@@ -165,7 +485,7 @@ class ElevatorTest(unittest.TestCase):
         self.assertFalse(elevatorController.isCabinDoorClosed())
 
         self.assertEquals(1,elevatorController.cabinFloorNumber())
-        
+
     def test05ElevatorGetsIdleWhenDoorGetOpened(self):
         elevatorController = ElevatorController()
     
@@ -187,301 +507,3 @@ class ElevatorTest(unittest.TestCase):
         
         self.assertEquals(1,elevatorController.cabinFloorNumber())
     
-    # STOP HERE!
-    
-    def test06DoorKeepsOpenedWhenOpeningIsRequested(self):
-        elevatorController = ElevatorController()
-        
-        self.assertTrue(elevatorController.isCabinDoorOpened())
-        
-        elevatorController.openCabinDoor()
-
-        self.assertTrue(elevatorController.isCabinDoorOpened())
-
-    def test07DoorMustBeOpenedWhenCabinIsStoppedAndClosingDoors(self):
-        elevatorController = ElevatorController()
-    
-        elevatorController.goUpPushedFromFloor(1)
-        
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorClosing())
-        
-        elevatorController.openCabinDoor()
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpening())
-    
-
-    def test08CanNotOpenDoorWhenCabinIsMoving(self):
-        elevatorController = ElevatorController()
-    
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinMoving())
-        self.assertTrue(elevatorController.isCabinDoorClosed())
-
-        elevatorController.openCabinDoor()
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinMoving())
-        self.assertTrue(elevatorController.isCabinDoorClosed())
-    
-
-    def test09DoorKeepsOpeneingWhenItIsOpeneing(self):
-        elevatorController = ElevatorController()
-    
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(1)
-
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpening())
-
-        elevatorController.openCabinDoor()
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpening())
-    
-
-    # STOP HERE!!
-    
-    def test10RequestToGoUpAreEnqueueWhenRequestedWhenCabinIsMoving(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(1)
-        elevatorController.goUpPushedFromFloor(2)
-        elevatorController.cabinDoorOpened()
-    
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinWaitingForPeople())
-        self.assertTrue(elevatorController.isCabinDoorOpened())
-    
-
-    def test11CabinDoorStartClosingAfterWaitingForPeople(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(1)
-        elevatorController.goUpPushedFromFloor(2)
-        elevatorController.cabinDoorOpened()
-        elevatorController.waitForPeopleTimedOut()
-
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorClosing())
-    
-
-    def test12StopsWaitingForPeopleIfCloseDoorIsPressed(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(1)
-        elevatorController.goUpPushedFromFloor(2)
-        elevatorController.cabinDoorOpened()
-    
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinWaitingForPeople())
-        self.assertTrue(elevatorController.isCabinDoorOpened())
-
-        elevatorController.closeCabinDoor()
-
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorClosing())
-
-    
-
-    def test13CloseDoorDoesNothingIfIdle(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.closeCabinDoor()
-
-        self.assertTrue(elevatorController.isIdle())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpened())
-
-    
-
-    def test14CloseDoorDoesNothingWhenCabinIsMoving(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-    
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinMoving())
-        self.assertTrue(elevatorController.isCabinDoorClosed())
-
-        elevatorController.closeCabinDoor()
-
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinMoving())
-        self.assertTrue(elevatorController.isCabinDoorClosed())
-    
-
-    def test15CloseDoorDoesNothingWhenOpeningTheDoorToWaitForPeople(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(1)
-    
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpening())
-
-        elevatorController.closeCabinDoor()
-
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpening())
-
-    
-    # STOP HERE!!
-
-    def test16ElevatorHasToEnterEmergencyIfStoppedAndOtherFloorSensorTurnsOn(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(1)
-        try:
-            elevatorController.cabinOnFloor(0)
-            self.fail()
-        except ElevatorEmergency as elevatorEmergency:
-            self.assertTrue (elevatorEmergency.message == "Sensor de cabina desincronizado")
-
-    def test17ElevatorHasToEnterEmergencyIfFalling(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(2)
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(1)
-        try:
-            elevatorController.cabinOnFloor(0)
-            self.fail()
-        except ElevatorEmergency as elevatorEmergency:
-            self.assertTrue (elevatorEmergency.message == "Sensor de cabina desincronizado")
-        
-    
-
-    def test18ElevatorHasToEnterEmergencyIfJumpsFloors(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(3)
-        elevatorController.cabinDoorClosed()
-        try:
-            elevatorController.cabinOnFloor(3)
-            self.fail()
-        except ElevatorEmergency as elevatorEmergency:
-            self.assertTrue (elevatorEmergency.message == "Sensor de cabina desincronizado")
-        
-    
-
-    def test19ElevatorHasToEnterEmergencyIfDoorClosesAutomatically(self):
-        elevatorController = ElevatorController()
-        
-        try:
-            elevatorController.cabinDoorClosed()
-            self.fail()
-        except ElevatorEmergency as elevatorEmergency:
-            self.assertTrue (elevatorEmergency.message == "Sensor de puerta desincronizado")
-        
-    
-
-    def test20ElevatorHasToEnterEmergencyIfDoorClosedSensorTurnsOnWhenClosed(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        try:
-            elevatorController.cabinDoorClosed()
-            self.fail()
-        except ElevatorEmergency as elevatorEmergency:
-            self.assertTrue (elevatorEmergency.message == "Sensor de puerta desincronizado")
-        
-    
-
-    def test21ElevatorHasToEnterEmergencyIfDoorClosesWhenOpening(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(1)
-        try:
-            elevatorController.cabinDoorClosed()
-            self.fail()
-        except ElevatorEmergency as elevatorEmergency:
-            self.assertTrue (elevatorEmergency.message == "Sensor de puerta desincronizado")
-        
-    
-
-    # STOP HERE!!
-    # More tests here to verify bad sensor function
-    
-    def test22CabinHasToStopOnTheFloorsOnItsWay(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.goUpPushedFromFloor(2)
-        elevatorController.cabinOnFloor(1)
-
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpening())
-    
-    
-    def test23ElevatorCompletesAllTheRequests(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinDoorClosed()
-        elevatorController.goUpPushedFromFloor(2)
-        elevatorController.cabinOnFloor(1)
-        elevatorController.cabinDoorOpened()
-        elevatorController.waitForPeopleTimedOut()
-        elevatorController.cabinDoorClosed()
-        elevatorController.cabinOnFloor(2)
-        
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpening())
-    
-    
-    def test24CabinHasToStopOnFloorsOnItsWayNoMatterHowTheyWellCalled(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(2)
-        elevatorController.cabinDoorClosed()
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinOnFloor(1)
-        
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorOpening())
-    
-    
-    def test25CabinHasToStopAndWaitForPeopleOnFloorsOnItsWayNoMatterHowTheyWellCalled(self):
-        elevatorController = ElevatorController()
-        
-        elevatorController.goUpPushedFromFloor(2)
-        elevatorController.cabinDoorClosed()
-        elevatorController.goUpPushedFromFloor(1)
-        elevatorController.cabinOnFloor(1)
-        elevatorController.cabinDoorOpened()
-        elevatorController.waitForPeopleTimedOut()
-        
-        self.assertTrue(elevatorController.isWorking())
-        self.assertTrue(elevatorController.isCabinStopped())
-        self.assertTrue(elevatorController.isCabinDoorClosing())
-    
-
-

@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElevatorExercise", "ElevatorExercise\ElevatorExercise.csproj", "{C9251562-EE73-4D21-A339-52BE3961D87E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CF57CAD3-473E-42A0-B4FE-90B6F97B1A26}"
+	ProjectSection(SolutionItems) = preProject
+		ElevatorExercise.vsmdi = ElevatorExercise.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = ElevatorExercise.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9251562-EE73-4D21-A339-52BE3961D87E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9251562-EE73-4D21-A339-52BE3961D87E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9251562-EE73-4D21-A339-52BE3961D87E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9251562-EE73-4D21-A339-52BE3961D87E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

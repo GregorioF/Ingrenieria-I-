@@ -1,3 +1,4 @@
+
 #
 # Developed by 10Pines SRL
 # License: 
@@ -7,6 +8,8 @@
 # or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, 
 # California, 94041, USA.
 # 
+
+
 
 class ElevatorEmergency(Exception):
     pass
@@ -69,7 +72,7 @@ class CabinDoorClosingState(CabinDoorState):
     def closeCabinDoorWhenWorkingAndCabinStopped(self):
         raise NotImplementedError()
 
-    def acceptDoorVisitor(aVisitor):
+    def acceptDoorVisitor(self, aVisitor):
         return aVisitor.visitCabinDoorClosingState(self)
 
 class CabinDoorOpenedState(CabinDoorState):
@@ -101,7 +104,7 @@ class CabinDoorOpenedState(CabinDoorState):
     def openCabinDoorWhenWorkingAndCabinStopped(self):
         raise NotImplementedError()
 
-    def acceptDoorVisitor(aVisitor):
+    def acceptDoorVisitor(self,aVisitor):
         return aVisitor.visitCabinDoorOpenedState(self)
 
 class CabinDoorClosedState(CabinDoorState):
@@ -133,7 +136,7 @@ class CabinDoorClosedState(CabinDoorState):
     def closeCabinDoorWhenWorkingAndCabinStopped(self):
         raise NotImplementedError()
 
-    def acceptDoorVisitor(aVisitor):
+    def acceptDoorVisitor(self,aVisitor):
         return aVisitor.visitCabinDoorClosedState(self)
 
 class CabinDoorOpeningState(CabinDoorState):
@@ -165,7 +168,7 @@ class CabinDoorOpeningState(CabinDoorState):
     def closeCabinDoorWhenWorkingAndCabinStopped(self):
         self.elevatorController.closeCabinDoorWhenWorkingAndCabinStoppedAndCabinDoorOpening();
 
-    def acceptDoorVisitor(aVisitor):
+    def acceptDoorVisitor(self,aVisitor):
         return aVisitor.visitCabinDoorOpeningState(self)
 
 
@@ -232,6 +235,9 @@ class CabinStoppedState(CabinState):
         
     def waitForPeopleTimedOutWhenWorking(self):
         raise NotImplementedError()
+
+    def acceptCabineVisitor (self, aVisitor):
+        return aVisitor.visitCabinStoppedState(self)
     
 
 class CabinMovingState(CabinState):
@@ -265,6 +271,10 @@ class CabinMovingState(CabinState):
         
     def waitForPeopleTimedOutWhenWorking(self):
         raise NotImplementedError()
+
+    def acceptCabineVisitor (self, aVisitor):
+        return aVisitor.CabinMovingState(self)
+    
     
 class CabinWaitingForPeopleState(CabinState):
     
@@ -297,6 +307,9 @@ class CabinWaitingForPeopleState(CabinState):
         
     def waitForPeopleTimedOutWhenWorking(self):
         self.elevatorController.waitForPeopleTimedOutWhenWorkingAndCabinWaitingForPeople();
+
+    def acceptCabineVisitor (self, aVisitor):
+        return aVisitor.CabinWaitingForPeopleState(self)
  
 class ElevatorControllerState:
 
@@ -447,11 +460,11 @@ class ElevatorController:
     
     #Events
     def goUpPushedFromFloor(self, aFloorNumber):
-        for console in self._consoles:
-            console.goUpPushedFromFloor()
-
         self._state.goUpPushedFromFloor(aFloorNumber)
-    
+        
+        for console in self._consoles:
+            console.goUpPushedFromFloor(aFloorNumber)
+
 
     def cabinOnFloor(self, aFloorNumber):
         self._state.cabinOnFloor(aFloorNumber)
@@ -459,6 +472,9 @@ class ElevatorController:
 
     def cabinDoorClosed(self):
         self._state.cabindDoorClosed()
+
+        for console in self._consoles:
+            console.cabinDoorClosed()
     
     def openCabinDoor(self):
         self._state.openCabinDoor()
@@ -599,12 +615,12 @@ class ElevatorController:
     def cabinDoorClosedWhenWorkingAndCabinStoppedAndCabinDoorOpening(self):
         raise ElevatorEmergency("Sensor de puerta desincronizado")
     
-    def acceptDoorVisitor(aVisitor):
+    def acceptDoorVisitor(self, aVisitor):
         return self._cabinDoorState.acceptDoorVisitor(aVisitor)
 
-    def subscribeConsole(aConsole):
+    def subscribeConsole(self, aConsole):
         self._consoles.append(aConsole)
 
-
-
+    def acceptCabineVisitor(self, aVisitor):
+        return self._cabinState.acceptCabineVisitor(aVisitor)
 

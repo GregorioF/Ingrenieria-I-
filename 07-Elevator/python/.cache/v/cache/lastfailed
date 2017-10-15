@@ -1,0 +1,21 @@
+{
+  "ElevatorTest.py::ElevatorTest::test04CabinStopsAndStartsOpeningDoorWhenGetsToDestination": true, 
+  "ElevatorTest.py::ElevatorTest::test05ElevatorGetsIdleWhenDoorGetOpened": true, 
+  "ElevatorTest.py::ElevatorTest::test07DoorMustBeOpenedWhenCabinIsStoppedAndClosingDoors": true, 
+  "ElevatorTest.py::ElevatorTest::test08CanNotOpenDoorWhenCabinIsMoving": true, 
+  "ElevatorTest.py::ElevatorTest::test10RequestToGoUpAreEnqueueWhenRequestedWhenCabinIsMoving": true, 
+  "ElevatorTest.py::ElevatorTest::test11CabinDoorStartClosingAfterWaitingForPeople": true, 
+  "ElevatorTest.py::ElevatorTest::test12StopsWaitingForPeopleIfCloseDoorIsPressed": true, 
+  "ElevatorTest.py::ElevatorTest::test13CloseDoorDoesNothingIfIdle": true, 
+  "ElevatorTest.py::ElevatorTest::test14CloseDoorDoesNothingWhenCabinIsMoving": true, 
+  "ElevatorTest.py::ElevatorTest::test15CloseDoorDoesNothingWhenOpeningTheDoorToWaitForPeople": true, 
+  "ElevatorTest.py::ElevatorTest::test16ElevatorHasToEnterEmergencyIfStoppedAndOtherFloorSensorTurnsOn": true, 
+  "ElevatorTest.py::ElevatorTest::test17ElevatorHasToEnterEmergencyIfFalling": true, 
+  "ElevatorTest.py::ElevatorTest::test18ElevatorHasToEnterEmergencyIfJumpsFloors": true, 
+  "ElevatorTest.py::ElevatorTest::test19ElevatorHasToEnterEmergencyIfDoorClosesAutomatically": true, 
+  "ElevatorTest.py::ElevatorTest::test20ElevatorHasToEnterEmergencyIfDoorClosedSensorTurnsOnWhenClosed": true, 
+  "ElevatorTest.py::ElevatorTest::test21ElevatorHasToEnterEmergencyIfDoorClosesWhenOpening": true, 
+  "ElevatorTest.py::ElevatorTest::test23ElevatorCompletesAllTheRequests": true, 
+  "ElevatorTest.py::ElevatorTest::test24CabinHasToStopOnFloorsOnItsWayNoMatterHowTheyWellCalled": true, 
+  "ElevatorTest.py::ElevatorTest::test25CabinHasToStopAndWaitForPeopleOnFloorsOnItsWayNoMatterHowTheyWellCalled": true
+}
