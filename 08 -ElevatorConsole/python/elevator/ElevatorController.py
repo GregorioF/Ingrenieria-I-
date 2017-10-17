@@ -1,4 +1,7 @@
 
+
+
+
 #
 # Developed by 10Pines SRL
 # License: 
@@ -237,7 +240,7 @@ class CabinStoppedState(CabinState):
         raise NotImplementedError()
 
     def acceptCabineVisitor (self, aVisitor):
-        return aVisitor.visitCabinStoppedState(self)
+        return aVisitor.visitCabinStoppedState()
     
 
 class CabinMovingState(CabinState):
@@ -273,7 +276,7 @@ class CabinMovingState(CabinState):
         raise NotImplementedError()
 
     def acceptCabineVisitor (self, aVisitor):
-        return aVisitor.CabinMovingState(self)
+        return aVisitor.visitCabinMovingState()
     
     
 class CabinWaitingForPeopleState(CabinState):
@@ -309,7 +312,7 @@ class CabinWaitingForPeopleState(CabinState):
         self.elevatorController.waitForPeopleTimedOutWhenWorkingAndCabinWaitingForPeople();
 
     def acceptCabineVisitor (self, aVisitor):
-        return aVisitor.CabinWaitingForPeopleState(self)
+        return aVisitor.visitCabinWaitingForPeopleState()
  
 class ElevatorControllerState:
 
@@ -409,18 +412,23 @@ class ElevatorControllerIsWorkingState(ElevatorControllerState):
 class ElevatorController:
 
     def __init__(self):
+
+        self._consoles = []
         self.controllerIsIdle()
         self.cabinIsStopped()
         self.cabinDoorIsOpened()
         self._cabinFloorNumber = 0
         self._floorsToGo = []
-        self._consoles = []
     
     def cabinDoorIsOpened(self):
         self._cabinDoorState = CabinDoorOpenedState(self)
+        for console in self._consoles:
+            console.DescriptionDoor()
     
     def cabinIsStopped(self):
         self._cabinState = CabinStoppedState(self)
+        for console in self._consoles:
+            console.DescriptionCabin()
     
     def controllerIsIdle(self):
         self._state = ElevatorControllerIdleState(self)
@@ -462,19 +470,13 @@ class ElevatorController:
     def goUpPushedFromFloor(self, aFloorNumber):
         self._state.goUpPushedFromFloor(aFloorNumber)
         
-        for console in self._consoles:
-            console.goUpPushedFromFloor(aFloorNumber)
-
-
+        
     def cabinOnFloor(self, aFloorNumber):
         self._state.cabinOnFloor(aFloorNumber)
     
 
     def cabinDoorClosed(self):
         self._state.cabindDoorClosed()
-
-        for console in self._consoles:
-            console.cabinDoorClosed()
     
     def openCabinDoor(self):
         self._state.openCabinDoor()
@@ -495,6 +497,8 @@ class ElevatorController:
     
     def cabinDoorIsClosing(self):
         self._cabinDoorState = CabinDoorClosingState(self)
+        for console in self._consoles:
+            console.DescriptionDoor()
     
     def controllerIsWorking(self):
         self._state = ElevatorControllerIsWorkingState(self)
@@ -507,7 +511,11 @@ class ElevatorController:
     
     def cabinDoorClosedWhenWorkingAndCabinStoppedAndClosing(self):
         self._cabinDoorState = CabinDoorClosedState(self)
+        for console in self._consoles:
+            console.DescriptionDoor()
         self._cabinState = CabinMovingState(self)
+        for console in self._consoles:
+            console.DescriptionCabin()
         
     def cabinOnFloorWhenWorking(self, aFloorNumber):
         if (aFloorNumber<self._cabinFloorNumber):
@@ -523,6 +531,8 @@ class ElevatorController:
           
     def cabinDoorIsOpening(self):
         self._cabinDoorState = CabinDoorOpeningState(self)
+        for console in self._consoles:
+            console.DescriptionDoor()
         
     def cabinOnFloorWhenIdle(self, aFloorNumber):
         raise ElevatorEmergency("Sensor de cabina desincronizado")
@@ -539,6 +549,8 @@ class ElevatorController:
     
     def cabinIsWaitingForPeople(self):
         self._cabinState = CabinWaitingForPeopleState(self)
+        for console in self._consoles:
+            console.DescriptionCabin()
     
     def controllerStateIsIdle(self):
         self._state = ElevatorControllerIdleState(self)
