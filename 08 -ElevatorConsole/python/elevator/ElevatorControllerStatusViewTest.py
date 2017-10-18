@@ -40,13 +40,13 @@ class StatusCabinDoorVisitor(Visitor):
 
 
 class StatusCabinVisitor(Visitor):
-    def visitCabinStoppedState(self):
+    def visitCabinStoppedState(self, aCabine):
         return "Stopped"
 
-    def visitCabinMovingState(self):
+    def visitCabinMovingState(self, aCabine):
         return "Moving"
 
-    def visitCabinWaitingForPeopleState(self):
+    def visitCabinWaitingForPeopleState(self, aCabine):
         return "WaitingForPeople"    
 
 
@@ -67,46 +67,54 @@ class DescriptionDoorVisitor(DoorVisitor):
 
 class DescriptionCabineVisitor(Visitor):
 
-    def visitCabinStoppedState(self):
+    def visitCabinStoppedState(self, aCabine):
         return "Cabina Detenida"
 
-    def visitCabinMovingState(self):
+    def visitCabinMovingState(self, aCabine):
         return "Cabina Moviendose"
 
-    def visitCabinWaitingForPeopleState(self):
+    def visitCabinWaitingForPeopleState(self, aCabine):
         return "Cabina esperando a la gente"
 
 
-class ElevatorControllerConsole():
+class Observer:
+
+    def ObserveDoor(self):
+        pass
+    def ObserverCabin(self):
+        pass
+
+
+class ElevatorControllerConsole(Observer):
     def __init__(self,elevatorController):
         self._elevatorController = elevatorController
-        self._elevatorController.subscribeConsole(self)
+        self._elevatorController.subscribeObserver(self)
         self._lines = []
         
     def lines(self):
         return self._lines
 
-    def DescriptionDoor(self):
+    def ObserveDoor(self):
 
         self._lines.append(self._elevatorController.acceptDoorVisitor(DescriptionDoorVisitor()))
 
 
-    def DescriptionCabin(self):
+    def ObserveCabin(self):
 
         self._lines.append(self._elevatorController.acceptCabineVisitor(DescriptionCabineVisitor()))
 
 
 
 
-class ElevatorControllerStatusView:
+class ElevatorControllerStatusView(Observer):
     def __init__(self,elevatorController):
         self._elevatorController = elevatorController
-        self._elevatorController.subscribeStatusView(self)
+        self._elevatorController.subscribeObserver(self)
 
-    def UploadInfoDoor(self):
+    def ObserveDoor(self):
         self._cabinDoorStateFieldModel = self._elevatorController.acceptDoorVisitor(StatusCabinDoorVisitor())
 
-    def UploadInfoCabin(self):
+    def ObserveCabin(self):
         self._cabinStateFieldModel = self._elevatorController.acceptCabineVisitor(StatusCabinVisitor())
 
     def cabinDoorStateFieldModel(self):
@@ -236,9 +244,6 @@ class CabinDoorClosingState(CabinDoorState):
     def __init__(self,elevatorController):
         self.elevatorController = elevatorController
   
-    def accept(self,aVisitor):
-        return aVisitor.visitCabinDoorClosingState(self)
-    
     def isOpened(self):
         return False
     
@@ -260,7 +265,7 @@ class CabinDoorClosingState(CabinDoorState):
     def closeCabinDoorWhenWorkingAndCabinStopped(self):
         raise NotImplementedError()
 
-    def acceptDoorVisitor(self, aVisitor):
+    def accept(self, aVisitor):
         return aVisitor.visitCabinDoorClosingState(self)
 
 class CabinDoorOpenedState(CabinDoorState):
@@ -268,9 +273,6 @@ class CabinDoorOpenedState(CabinDoorState):
     def __init__(self, elevatorController):
         self.elevatorController = elevatorController
     
-    def accept(self,aVisitor):
-        return aVisitor.visitCabinDoorOpenedState(self)
-    
     def isOpened(self):
         return True
     
@@ -292,7 +294,7 @@ class CabinDoorOpenedState(CabinDoorState):
     def openCabinDoorWhenWorkingAndCabinStopped(self):
         raise NotImplementedError()
 
-    def acceptDoorVisitor(self,aVisitor):
+    def accept(self,aVisitor):
         return aVisitor.visitCabinDoorOpenedState(self)
 
 class CabinDoorClosedState(CabinDoorState):
@@ -300,9 +302,6 @@ class CabinDoorClosedState(CabinDoorState):
     def __init__(self,elevatorController):
         self.elevatorController = elevatorController
   
-    def accept(self,aVisitor):
-        return aVisitor.visitCabinDoorClosedState(self)
-    
     def isOpened(self):
         return False
     
@@ -324,7 +323,7 @@ class CabinDoorClosedState(CabinDoorState):
     def closeCabinDoorWhenWorkingAndCabinStopped(self):
         raise NotImplementedError()
 
-    def acceptDoorVisitor(self,aVisitor):
+    def accept(self,aVisitor):
         return aVisitor.visitCabinDoorClosedState(self)
 
 class CabinDoorOpeningState(CabinDoorState):
@@ -332,9 +331,6 @@ class CabinDoorOpeningState(CabinDoorState):
     def __init__(self,elevatorController):
         self.elevatorController = elevatorController
   
-    def accept(self,aVisitor):
-        return aVisitor.visitCabinDoorOpeningState(self)
-    
     def isOpened(self):
         return False
     
@@ -356,7 +352,7 @@ class CabinDoorOpeningState(CabinDoorState):
     def closeCabinDoorWhenWorkingAndCabinStopped(self):
         self.elevatorController.closeCabinDoorWhenWorkingAndCabinStoppedAndCabinDoorOpening();
 
-    def acceptDoorVisitor(self,aVisitor):
+    def accept(self,aVisitor):
         return aVisitor.visitCabinDoorOpeningState(self)
 
 
@@ -397,9 +393,6 @@ class CabinStoppedState(CabinState):
     def __init__(self,elevatorController):
         self.elevatorController = elevatorController
         
-    def accept(self,aVisitor):
-        return aVisitor.visitCabinStoppedState(self)
-    
     def cabinDoorClosedWhenWorking(self):
         self.elevatorController.cabinDoorClosedWhenWorkingAndCabinStopped();
     
@@ -424,18 +417,15 @@ class CabinStoppedState(CabinState):
     def waitForPeopleTimedOutWhenWorking(self):
         raise NotImplementedError()
 
-    def acceptCabineVisitor (self, aVisitor):
-        return aVisitor.visitCabinStoppedState()
+    def accept (self, aVisitor):
+        return aVisitor.visitCabinStoppedState(self)
     
 
 class CabinMovingState(CabinState):
     
     def __init__(self,elevatorController):
         self.elevatorController = elevatorController
-        
-    def accept(self,aVisitor):
-        return aVisitor.visitCabinMovingState(self)
-    
+   
     def cabinDoorClosedWhenWorking(self):
         self.elevatorController.cabinDoorClosedWhenWorkingAndCabinMoving()
     
@@ -460,17 +450,14 @@ class CabinMovingState(CabinState):
     def waitForPeopleTimedOutWhenWorking(self):
         raise NotImplementedError()
 
-    def acceptCabineVisitor (self, aVisitor):
-        return aVisitor.visitCabinMovingState()
+    def accept (self, aVisitor):
+        return aVisitor.visitCabinMovingState(self)
     
     
 class CabinWaitingForPeopleState(CabinState):
     
     def __init__(self,elevatorController):
         self.elevatorController = elevatorController
-        
-    def accept(self,aVisitor):
-        return aVisitor.visitCabinWaitingForPeopleState(self)
     
     def cabinDoorClosedWhenWorking(self):
         raise NotImplementedError()
@@ -496,8 +483,8 @@ class CabinWaitingForPeopleState(CabinState):
     def waitForPeopleTimedOutWhenWorking(self):
         self.elevatorController.waitForPeopleTimedOutWhenWorkingAndCabinWaitingForPeople();
 
-    def acceptCabineVisitor (self, aVisitor):
-        return aVisitor.visitCabinWaitingForPeopleState()
+    def accept (self, aVisitor):
+        return aVisitor.visitCabinWaitingForPeopleState(self)
  
 class ElevatorControllerState:
 
@@ -598,8 +585,7 @@ class ElevatorController:
 
     def __init__(self):
 
-        self._statusViews = []
-        self._consoles = []
+        self._observers = []
         self.controllerIsIdle()
         self.cabinIsStopped()
         self.cabinDoorIsOpened()
@@ -608,11 +594,11 @@ class ElevatorController:
     
     def cabinDoorIsOpened(self):
         self._cabinDoorState = CabinDoorOpenedState(self)
-        self.actualizarConsolasInfoPuerta(self._cabinDoorState)
+        self.doorChange(self._cabinDoorState)
     
     def cabinIsStopped(self):
         self._cabinState = CabinStoppedState(self)
-        self.actualizarConsolasInfoCabina(self._cabinState)
+        self.cabinChange(self._cabinState)
     
     def controllerIsIdle(self):
         self._state = ElevatorControllerIdleState(self)
@@ -681,7 +667,7 @@ class ElevatorController:
     
     def cabinDoorIsClosing(self):
         self._cabinDoorState = CabinDoorClosingState(self)
-        self.actualizarConsolasInfoPuerta(self._cabinDoorState)
+        self.doorChange(self._cabinDoorState)
     
     def controllerIsWorking(self):
         self._state = ElevatorControllerIsWorkingState(self)
@@ -694,9 +680,9 @@ class ElevatorController:
     
     def cabinDoorClosedWhenWorkingAndCabinStoppedAndClosing(self):
         self._cabinDoorState = CabinDoorClosedState(self)
-        self.actualizarConsolasInfoPuerta(self._cabinDoorState)
+        self.doorChange(self._cabinDoorState)
         self._cabinState = CabinMovingState(self)
-        self.actualizarConsolasInfoCabina(self._cabinState)
+        self.cabinChange(self._cabinState)
         
     def cabinOnFloorWhenWorking(self, aFloorNumber):
         if (aFloorNumber<self._cabinFloorNumber):
@@ -712,7 +698,7 @@ class ElevatorController:
           
     def cabinDoorIsOpening(self):
         self._cabinDoorState = CabinDoorOpeningState(self)
-        self.actualizarConsolasInfoPuerta(self._cabinDoorState)
+        self.doorChange(self._cabinDoorState)
         
     def cabinOnFloorWhenIdle(self, aFloorNumber):
         raise ElevatorEmergency("Sensor de cabina desincronizado")
@@ -729,7 +715,7 @@ class ElevatorController:
     
     def cabinIsWaitingForPeople(self):
         self._cabinState = CabinWaitingForPeopleState(self)
-        self.actualizarConsolasInfoCabina(self._cabinState)
+        self.cabinChange(self._cabinState)
         
     
     def controllerStateIsIdle(self):
@@ -808,25 +794,18 @@ class ElevatorController:
         raise ElevatorEmergency("Sensor de puerta desincronizado")
     
     def acceptDoorVisitor(self, aVisitor):
-        return self._cabinDoorState.acceptDoorVisitor(aVisitor)
+        return self._cabinDoorState.accept(aVisitor)
 
-    def subscribeConsole(self, aConsole):
-        self._consoles.append(aConsole)
-
-    def subscribeStatusView(self, aStatusView):
-        self._statusViews.append(aStatusView)
+    def subscribeObserver(self, aObserver):
+        self._observers.append(aObserver)
 
     def acceptCabineVisitor(self, aVisitor):
-        return self._cabinState.acceptCabineVisitor(aVisitor)
+        return self._cabinState.accept(aVisitor)
 
-    def actualizarConsolasInfoCabina(self, aCabin):
-        for console in self._consoles:
-            console.DescriptionCabin()
-        for statusView in self._statusViews:
-            statusView.UploadInfoCabin()
+    def doorChange(self, aCabin):
+        for observer in self._observers:
+            observer.ObserveDoor() 
 
-    def actualizarConsolasInfoPuerta(self, aDoor):
-        for console in self._consoles:
-            console.DescriptionDoor()
-        for statusView in self._statusViews:
-            statusView.UploadInfoDoor()
+    def cabinChange(self, aDoor):
+        for observer in self._observers:
+            observer.ObserveCabin()
