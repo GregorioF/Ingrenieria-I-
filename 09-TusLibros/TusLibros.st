@@ -183,20 +183,24 @@ test01cantCheckOutEmptyCart
 		withExceptionDo: [ :error |
 			self assert: Clerk emptyCartOnCheckoutMessage = error messageText ].! !
 
-!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:29:21'!
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 14:58:05'!
 test02canCheckOutProductsIfCardIsNotExpired
 	| carrito cajero tarjeta |
 	carrito _ TestFactory fullCart.
-	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) catalog: TestFactory catalogABC123.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123 
+		merchantProcessor: MerchProcSim new.
 	tarjeta := TestFactory notExpiredCard.
 	cajero checkout: carrito with: tarjeta.
 ! !
 
-!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:32:03'!
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:00:07'!
 test03cantCheckOutProductsIfCardIsExpired
 	| carrito cajero tarjeta |
 	carrito _ TestFactory fullCart.
-	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) catalog: TestFactory catalogABC123.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123
+		merchantProcessor: MerchProcSim new.
 	tarjeta := TestFactory expiredCard.
 	self 
 		should: [
@@ -208,11 +212,13 @@ test03cantCheckOutProductsIfCardIsExpired
 
 ! !
 
-!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:32:49'!
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:00:13'!
 test04ClerkMustKnowTheSameCatalogAsTheCartForCheckout
 	| carrito cajero tarjeta |
 	carrito _ TestFactory diferentCatalogCart.
-	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) catalog: TestFactory catalogABC123.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123
+		merchantProcessor: MerchProcSim new.
 	tarjeta := TestFactory notExpiredCard.
 	self 
 		should: [
@@ -224,16 +230,95 @@ test04ClerkMustKnowTheSameCatalogAsTheCartForCheckout
 
 ! !
 
-!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:12:11'!
-test05CheckoutReturnsTheCorrectCost
-	| carrito cajero tarjeta value |
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:00:19'!
+test05ValueOfReturnsTheCorrectCost
+	| carrito cajero value |
 	carrito _ TestFactory emptyCart.
 	carrito add: 1 item: 'A'.
 	carrito add: 2 item: 'C'.
-	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) catalog: TestFactory catalogABC123.
-	tarjeta _ TestFactory notExpiredCard.
-	value := (cajero checkout: carrito with: tarjeta).
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123
+		merchantProcessor: MerchProcSim new.
+	value := (cajero valueOf: carrito).
 	self assert: [ value = 7 ].! !
+
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:00:34'!
+test06CheckoutReturnsATransactionIDIfCorrect
+	| carrito cajero tarjeta id |
+	carrito _ TestFactory emptyCart.
+	carrito add: 1 item: 'A'.
+	carrito add: 2 item: 'C'.
+	tarjeta := TestFactory notExpiredCard.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123
+		merchantProcessor: MerchProcSim new.
+	id := (cajero checkout: carrito with: tarjeta).
+	self assert: [id = '0001']! !
+
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:12:55'!
+test07CheckoutRisesExceptionIfCardIsLost
+	| carrito cajero tarjeta |
+	carrito _ TestFactory emptyCart.
+	carrito add: 1 item: 'A'.
+	carrito add: 2 item: 'C'.
+	tarjeta := TestFactory lostCard.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123
+		merchantProcessor: MerchProcSim new.
+	
+	self should:
+			[cajero checkout: carrito with: tarjeta.
+			self fail.]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo:[ :error |
+			self assert: Clerk lostCardReturnMessage =
+			error messageText ]
+	
+	! !
+
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:22:36'!
+test08CheckoutRisesExceptionIfCardHasNoCredit
+	| carrito cajero tarjeta |
+	carrito _ TestFactory emptyCart.
+	carrito add: 1 item: 'A'.
+	carrito add: 2 item: 'C'.
+	tarjeta := TestFactory creditlessCard.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123
+		merchantProcessor: MerchProcSim new.
+	
+	self should:
+			[cajero checkout: carrito with: tarjeta.
+			self fail.]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo:[ :error |
+			self assert: Clerk noCreditReturnMessage =
+			error messageText ]
+	
+	! !
+
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:29:53'!
+test09CheckoutExpiredCardShouldntRiseTheReturnException
+	| carrito cajero tarjeta |
+	"este test esta para ver si el error que tira es el de la cajera diciendo que esta expirada ANTES de enviar al servidor el mensaje. presupone que el processor hace lo mismo que la cajera."
+	carrito _ TestFactory emptyCart.
+	carrito add: 1 item: 'A'.
+	carrito add: 2 item: 'C'.
+	tarjeta := TestFactory expiredCard.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123
+		merchantProcessor: MerchProcSim new.
+	
+	self should:
+			[cajero checkout: carrito with: tarjeta.
+			self fail.]
+		raise: Error - MessageNotUnderstood 
+		withExceptionDo:[ :error |
+			self assert: (Clerk expiredCardReturnMessage =
+			error messageText) not 
+		]
+	
+	! !
 
 
 !classDefinition: #Card category: #TusLibros!
@@ -256,6 +341,10 @@ for: aString expires: aDate number: aNumber
 !Card methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:35:45'!
 isExpired: aDate 
 	^(expiration < aDate) or: (expiration = aDate).! !
+
+!Card methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 14:46:02'!
+number
+	^number! !
 
 !Card methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:19:36'!
 owner
@@ -399,29 +488,39 @@ withCatalog: aCatalog timer: aTimer
 
 !classDefinition: #Clerk category: #TusLibros!
 Object subclass: #Clerk
-	instanceVariableNames: 'date catalog'
+	instanceVariableNames: 'date catalog processor'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:12:38'!
+!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:21:15'!
 checkout: aCart with: aCard 
-	|suma|
+	|value id|
 	(aCart isEmpty) ifTrue: [self error: Clerk emptyCartOnCheckoutMessage].
 	(aCard isExpired: date) ifTrue:[self error: Clerk expiredCardMessage].
 	(catalog = aCart  catalog) ifFalse:[self error: Clerk notValidCatalogMessage].
+	value := self valueOf: aCart.
+	id := processor debitCard: (aCard number) expiration: (aCard expiration) owner: (aCard owner) amount: value.
+	
+	id := id findTokens:'|'.
+	((id at: 1) = '0') ifTrue: [^id at: 2.].
+	((id at: 2) = 'Tarjeta_perdida') ifTrue: [self error: Clerk lostCardReturnMessage].
+	((id at: 2) = 'Tarjeta_sin_credito') ifTrue: [self error: Clerk noCreditReturnMessage].
+	((id at: 2) = 'Tarjeta_expirada') ifTrue: [self error: Clerk expiredCardReturnMessage].
+	self error: Clerk unknownError.! !
+
+!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 14:27:32'!
+valueOf: aCart 
+	|suma|
 	suma := 0.
 	aCart items keysAndValuesDo: [:aKey :aValue | suma := suma + (catalog at: aKey) * aValue].
 	^suma! !
 
-!Clerk methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 13:35:19'!
-withDate: aDate 
-	date := aDate.! !
-
-!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:14:58'!
-withDate: aDate catalog: aCatalog
+!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 14:56:03'!
+withDate: aDate catalog: aCatalog merchantProcessor: aProcessor
 	date := aDate.
-	catalog := aCatalog.! !
+	catalog := aCatalog.
+	processor := aProcessor.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -437,26 +536,46 @@ emptyCartOnCheckoutMessage
 expiredCardMessage
 	^'No se puede hacer checkout porque la tarjeta esta expirada'! !
 
+!Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:26:54'!
+expiredCardReturnMessage
+	'La tarjeta esta marcada como expirada en el processor'! !
+
+!Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:18:12'!
+lostCardReturnMessage
+	^'La tarjeta esta marcada como perdida en el processor'! !
+
+!Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:23:11'!
+noCreditReturnMessage
+	^'La tarjeta esta marcada como sin credito en el processor'! !
+
 !Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:34:17'!
 notValidCatalogMessage
 	^'El catalogo del carrito no corresponde a el del cajero'! !
+
+!Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:16:35'!
+unknownError
+	^'El mensaje de retorno era de un tipo no conocido'! !
 
 !Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:13:54'!
 withDate: aDate catalog: aCatalog
 	^self new withDate: aDate catalog: aCatalog! !
 
+!Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 14:59:07'!
+withDate: aDate catalog: aDictionary merchantProcessor: aMerchProcSim 
+	^self new withDate: aDate catalog: aDictionary merchantProcessor: aMerchProcSim ! !
+
 
-!classDefinition: #MerchantProcessorSim category: #TusLibros!
-Object subclass: #MerchantProcessorSim
+!classDefinition: #MerchProcSim category: #TusLibros!
+Object subclass: #MerchProcSim
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!MerchantProcessorSim methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 19:36:13'!
+!MerchProcSim methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:07:25'!
 debitCard: aCardNumber expiration: aCardExpiration owner: aCardOwner amount: anAmount
 	(aCardNumber = 1) ifTrue: [^'1|Tarjeta_sin_credito'].
-	(aCardNumber = 2) ifTrue: [^'1|Tarjeta_robada'].
+	(aCardNumber = 2) ifTrue: [^'1|Tarjeta_perdida'].
 	(aCardNumber = 3) ifTrue: [^'1|Tarjeta_expirada'].
 	^'0|0001'! !
 
@@ -483,6 +602,17 @@ catalogABC123
 	diccionario at: 'C' put: 3.
 	^diccionario! !
 
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:09:05'!
+creditlessCard
+	^ Card
+		newFor: 'Luis'
+		expires:
+			(Date
+				newDay: 1
+				month: 11
+				year: 2022)
+		number: 1.! !
+
 !TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:37:47'!
 diferentCatalogCart
 	| carrito catalogo|
@@ -496,9 +626,9 @@ diferentCatalogCart
 emptyCart
 	^Cart withCatalog: TestFactory catalogABC123.! !
 
-!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:45'!
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 14:39:47'!
 expiredCard
-	^Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2010) number: 1234! !
+	^Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2010) number: 03! !
 
 !TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:31:20'!
 fullCart
@@ -506,6 +636,17 @@ fullCart
 	carrito :=Cart withCatalog: TestFactory catalogABC123.
 	carrito add: 4 item: 'A'.
 	^carrito.! !
+
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:08:40'!
+lostCard
+	^ Card
+		newFor: 'Luis'
+		expires:
+			(Date
+				newDay: 1
+				month: 11
+				year: 2022)
+		number: 2.! !
 
 !TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:40'!
 notExpiredCard
