@@ -5,32 +5,84 @@ TestCase subclass: #CardTest
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!CardTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:03:46'!
+!CardTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:55:21'!
 test01CantCreateCardWithoutOwner
 
-	self should:[Card newFor: '' expires: (Date newDay: 01 month: 11 year: 2022 )]
+	self should:[Card newFor: '' expires: (Date newDay: 01 month: 11 year: 2022 ) number: 1234]
 	raise: Error - MessageNotUnderstood
 	withExceptionDo:[:error | self assert: Card emptyOwnerMessage = error messageText]! !
 
-!CardTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:18:34'!
+!CardTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:53:30'!
 test02ANewCardHasAOwnerAndExpiration
 	|tarjeta|
-	tarjeta := Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022 ).
+	tarjeta := Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022 ) number: 1234.
 	self assert:[tarjeta expiration = (Date newDay: 01 month: 11 year: 2022 )].
 	self assert:[tarjeta owner = 'Luis'].! !
 
-!CardTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:21:49'!
+!CardTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:21'!
 test03aCardIsExpiredAfterACertainDate
 	|tarjeta|
-	tarjeta := Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022 ).
+	tarjeta := Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022 ) number: 1234.
 	self assert:[tarjeta isExpired: (Date newDay: 01 month: 11 year: 2022 )].
 	self assert:[tarjeta isExpired: (Date newDay: 01 month: 12 year: 2022 )].! !
 
-!CardTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:42:35'!
+!CardTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:29'!
 test04aCardIsNotExpiredBeforeACertainDate
 	|tarjeta|
-	tarjeta := Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022 ).
+	tarjeta := Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022 ) number: 1234.
 	self assert:[(tarjeta isExpired: (Date newDay: 01 month: 10 year: 2022 )) = false]! !
+
+
+!classDefinition: #CartManagerTest category: #TusLibros!
+TestCase subclass: #CartManagerTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!CartManagerTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:00:10'!
+test01ReturnsAnIdWhenAskedForANewCart
+	|cartManager id |
+	cartManager := CartManager withCatalog: TestFactory catalogABC123 timer: ThreeOPTimer.
+	id := cartManager createCart.
+	self assert: [id = 1].! !
+
+!CartManagerTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:37:31'!
+test02ACartOperatesIfNotExpired
+	| cartManager id carrito |
+	cartManager _ CartManager
+		withCatalog: TestFactory catalogABC123
+		timer: ThreeOPTimer.
+	id _ cartManager createCart.
+	cartManager
+		makeCart: id
+		do: [ :aCart |
+			aCart
+				add: 2
+				item: 'A' ].
+	cartManager
+		makeCart: id
+		do: [ :aCart |
+			aCart
+				add: 1
+				item: 'B' ].
+	carrito _ cartManager carts at: id.
+	self assert: [ (carrito items at: 'A') = 2 ].
+	self assert: [ (carrito items at: 'B') = 1 ].! !
+
+!CartManagerTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:37:45'!
+test03FailWhenAExpiredCartOperates
+	|cartManager id |
+	cartManager := CartManager withCatalog: (TestFactory catalogABC123) timer: ThreeOPTimer.
+	id := cartManager createCart.
+	cartManager makeCart: id do: [:aCart | aCart add: 2 item: 'A'].
+	cartManager makeCart: id do: [:aCart | aCart add: 2 item: 'B'].
+	self should:  [cartManager makeCart: id do: [:aCart | aCart add: 1 item: 'C'].
+			self fail]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [:error|
+			self assert: CartManager cartExpiredMessage = error messageText ].
+	^ self.! !
 
 
 !classDefinition: #CartTest category: #TusLibros!
@@ -40,54 +92,54 @@ TestCase subclass: #CartTest
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'LIC 11/2/2017 19:51:06'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 16:10:53'!
 test01CreatedCartIsEmpty
 	|carrito|
-	carrito := Cart new.
+	carrito := Cart withCatalog: #().
 	self assert: carrito isEmpty
 	! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 11:43:45'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:24:45'!
 test02CanAddBooksInCatalog
 	|carrito|
-	carrito := Cart withCatalog: #('123').
-	carrito add: 1 item: '123'.
-	self assert: [carrito items includesKey: '123'].! !
+	carrito := Cart withCatalog: TestFactory catalogABC123.
+	carrito add: 1 item: 'A'.
+	self assert: [carrito items includesKey: 'A'].! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'LIC 11/2/2017 20:30:52'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:25:58'!
 test03CantAddItemsNotInCatalog
 	|carrito|
-	carrito := Cart withCatalog: #('123' '133' '7565').
+	carrito := Cart withCatalog: TestFactory catalogABC123.
 	self 
 		should: [ 
-			carrito add: 1 item: '1234'.
+			carrito add: 1 item: 'D'.
 			self fail]
 		raise: Error 
 		withExceptionDo: [ :error |
 			self assert: Cart notInCatalogMessage =
 			error messageText ]! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 11:39:35'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:25:23'!
 test04CanAddMoreThanOneBookWithSameISBN
 	|carrito|
-	carrito := Cart withCatalog: #('123' '133' '7565').	carrito add: 4 item: '123'.
-	self assert: [(carrito items at: '123') = 4]! !
+	carrito := Cart withCatalog: TestFactory catalogABC123.	carrito add: 4 item: 'A'.
+	self assert: [(carrito items at: 'A') = 4]! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 11:44:43'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:25:40'!
 test05CanAddMoreOfTheSameBook
 	|carrito|
-	carrito := Cart withCatalog: #('123' '133' '7565').	carrito add: 4 item: '123'.
-	carrito add: 2 item: '123'.
-	self assert: [(carrito items at: '123') = 6]! !
+	carrito := Cart withCatalog: TestFactory catalogABC123.	carrito add: 4 item: 'A'.
+	carrito add: 2 item: 'A'.
+	self assert: [(carrito items at: 'A') = 6]! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 11:53:07'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:26:11'!
 test06CantAddNegativeNumberOfBooks
 	|carrito|
-	carrito := Cart withCatalog: #('123' '133' '7565').
+	carrito := Cart withCatalog: TestFactory catalogABC123.
 	
 	self 
 		should: [ 
-			carrito add: -1 item: '123'.
+			carrito add: -1 item: 'A'.
 			self fail]
 		raise: Error 
 		withExceptionDo: [ :error |
@@ -95,14 +147,14 @@ test06CantAddNegativeNumberOfBooks
 			error messageText ].
 	self assert: carrito isEmpty.! !
 
-!CartTest methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 11:58:32'!
+!CartTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:26:27'!
 test07CantAddNonIntegerNumberOfBooks
 	|carrito|
-	carrito := Cart withCatalog: #('123' '133' '7565').
+	carrito := Cart withCatalog: TestFactory catalogABC123.
 	
 	self 
 		should: [ 
-			carrito add: 1.22 item: '123'.
+			carrito add: 1.22 item: 'A'.
 			self fail]
 		raise: Error 
 		withExceptionDo: [ :error |
@@ -131,22 +183,20 @@ test01cantCheckOutEmptyCart
 		withExceptionDo: [ :error |
 			self assert: Clerk emptyCartOnCheckoutMessage = error messageText ].! !
 
-!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 16:29:40'!
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:29:21'!
 test02canCheckOutProductsIfCardIsNotExpired
 	| carrito cajero tarjeta |
 	carrito _ TestFactory fullCart.
-	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017).
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) catalog: TestFactory catalogABC123.
 	tarjeta := TestFactory notExpiredCard.
-	
-	
 	cajero checkout: carrito with: tarjeta.
 ! !
 
-!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 16:36:33'!
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:32:03'!
 test03cantCheckOutProductsIfCardIsExpired
 	| carrito cajero tarjeta |
 	carrito _ TestFactory fullCart.
-	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017).
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) catalog: TestFactory catalogABC123.
 	tarjeta := TestFactory expiredCard.
 	self 
 		should: [
@@ -158,10 +208,37 @@ test03cantCheckOutProductsIfCardIsExpired
 
 ! !
 
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:32:49'!
+test04ClerkMustKnowTheSameCatalogAsTheCartForCheckout
+	| carrito cajero tarjeta |
+	carrito _ TestFactory diferentCatalogCart.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) catalog: TestFactory catalogABC123.
+	tarjeta := TestFactory notExpiredCard.
+	self 
+		should: [
+			cajero checkout: carrito with: tarjeta.
+			self fail]
+		raise:  Error - MessageNotUnderstood
+		withExceptionDo: [ :error |
+			self assert: Clerk notValidCatalogMessage = error messageText ].
+
+! !
+
+!ClerkTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:12:11'!
+test05CheckoutReturnsTheCorrectCost
+	| carrito cajero tarjeta value |
+	carrito _ TestFactory emptyCart.
+	carrito add: 1 item: 'A'.
+	carrito add: 2 item: 'C'.
+	cajero _ Clerk withDate: (Date newDay: 1 month: 11 year: 2017) catalog: TestFactory catalogABC123.
+	tarjeta _ TestFactory notExpiredCard.
+	value := (cajero checkout: carrito with: tarjeta).
+	self assert: [ value = 7 ].! !
+
 
 !classDefinition: #Card category: #TusLibros!
 Object subclass: #Card
-	instanceVariableNames: 'expiration owner'
+	instanceVariableNames: 'expiration owner number'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
@@ -170,10 +247,11 @@ Object subclass: #Card
 expiration
 	^expiration! !
 
-!Card methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:19:11'!
-for: aString expires: aDate 
+!Card methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:52:34'!
+for: aString expires: aDate number: aNumber
 	expiration := aDate.
-	owner := aString.! !
+	owner := aString.
+	number := aNumber.! !
 
 !Card methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:35:45'!
 isExpired: aDate 
@@ -193,10 +271,10 @@ Card class
 emptyOwnerMessage
 	^ 'No se puede crear una tarjeta sin dueño'.! !
 
-!Card class methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 15:15:39'!
-newFor: aString expires: aDate
+!Card class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:07'!
+newFor: aString expires: aDate number: aSmallInteger 
 	aString isEmpty ifTrue: [ self error: Card emptyOwnerMessage ].
-	^ self new for: aString expires: aDate.! !
+	^self new for: aString  expires: aDate number: aSmallInteger! !
 
 
 !classDefinition: #Cart category: #TusLibros!
@@ -206,10 +284,10 @@ Object subclass: #Cart
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 12:00:00'!
+!Cart methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:22:35'!
 add: aQuantity item: anISBN
 	|suma|
-	(catalog includes: anISBN) ifFalse: [self error: Cart notInCatalogMessage].
+	(catalog includesKey: anISBN) ifFalse: [self error: Cart notInCatalogMessage].
 	(aQuantity > 0) ifFalse: [self error: Cart cantAddNegativeQuantityMessage].
 	(aQuantity isInteger) ifFalse: [self error: Cart cantAddNonIntegerMessage].
 	
@@ -217,14 +295,14 @@ add: aQuantity item: anISBN
 	suma := items at: anISBN ifAbsent: 0.
 	items at: anISBN put: aQuantity + suma.! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'LIC 11/2/2017 19:56:23'!
-initialize
-	items := Dictionary new.! !
+!Cart methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:17:42'!
+catalog
+	^catalog! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'LIC 11/2/2017 20:15:00'!
-initializeWithCatalog: anArray 
+!Cart methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 16:35:58'!
+initializeWithCatalog: aCatalog 
 	items := Dictionary new.
-	catalog := Bag new addAll: anArray.! !
+	catalog := aCatalog.! !
 
 !Cart methodsFor: 'as yet unclassified' stamp: 'LIC 11/2/2017 19:53:57'!
 isEmpty
@@ -257,22 +335,93 @@ withCatalog: aCatalog
 	^self new initializeWithCatalog: aCatalog! !
 
 
-!classDefinition: #Clerk category: #TusLibros!
-Object subclass: #Clerk
-	instanceVariableNames: 'date'
+!classDefinition: #CartManager category: #TusLibros!
+Object subclass: #CartManager
+	instanceVariableNames: 'carts catalog nextId timer lastUses'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 16:38:05'!
+!CartManager methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 21:38:28'!
+carts
+	^carts! !
+
+!CartManager methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:02:45'!
+createCart
+	|id|
+	id := self nextId.
+	carts at: id put: (Cart withCatalog: catalog).
+	lastUses at: id put: (timer getTime).
+	^id! !
+
+!CartManager methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:55:11'!
+makeCart: anId do: aBlockClosure 
+	|cart lastUse currentTime|
+	lastUse := lastUses at: anId.
+	currentTime := timer getTime.
+	((currentTime - lastUse) < (Duration minutes: 30)) 
+		ifFalse: [self error: CartManager cartExpiredMessage].
+	lastUses at: anId put: currentTime.
+	cart := carts at: anId.
+	aBlockClosure value: cart.! !
+
+!CartManager methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 20:18:42'!
+nextId
+	|response|
+	response := nextId value.
+	nextId := nextId + 1.
+	^response! !
+
+!CartManager methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:34:21'!
+withCatalog: aCatalog timer: aTimer
+	catalog _ aCatalog.
+	carts _ Dictionary new.
+	lastUses _ Dictionary new.
+	nextId _ 1.
+	timer _ aTimer new.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CartManager class' category: #TusLibros!
+CartManager class
+	instanceVariableNames: ''!
+
+!CartManager class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:57:31'!
+cartExpiredMessage
+	^'Pasaron 30 minutos desde el ultimo uso de este carro'! !
+
+!CartManager class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:00:30'!
+withCatalog: aCatalog timer: aTimer
+	^ self new
+		withCatalog: aCatalog
+		timer: aTimer.! !
+
+
+!classDefinition: #Clerk category: #TusLibros!
+Object subclass: #Clerk
+	instanceVariableNames: 'date catalog'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:12:38'!
 checkout: aCart with: aCard 
+	|suma|
 	(aCart isEmpty) ifTrue: [self error: Clerk emptyCartOnCheckoutMessage].
 	(aCard isExpired: date) ifTrue:[self error: Clerk expiredCardMessage].
-	! !
+	(catalog = aCart  catalog) ifFalse:[self error: Clerk notValidCatalogMessage].
+	suma := 0.
+	aCart items keysAndValuesDo: [:aKey :aValue | suma := suma + (catalog at: aKey) * aValue].
+	^suma! !
 
 !Clerk methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 13:35:19'!
 withDate: aDate 
 	date := aDate.! !
+
+!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:14:58'!
+withDate: aDate catalog: aCatalog
+	date := aDate.
+	catalog := aCatalog.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -288,9 +437,28 @@ emptyCartOnCheckoutMessage
 expiredCardMessage
 	^'No se puede hacer checkout porque la tarjeta esta expirada'! !
 
-!Clerk class methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 13:56:18'!
-withDate: aDate 
-	^self new withDate: aDate! !
+!Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:34:17'!
+notValidCatalogMessage
+	^'El catalogo del carrito no corresponde a el del cajero'! !
+
+!Clerk class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:13:54'!
+withDate: aDate catalog: aCatalog
+	^self new withDate: aDate catalog: aCatalog! !
+
+
+!classDefinition: #MerchantProcessorSim category: #TusLibros!
+Object subclass: #MerchantProcessorSim
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!MerchantProcessorSim methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 19:36:13'!
+debitCard: aCardNumber expiration: aCardExpiration owner: aCardOwner amount: anAmount
+	(aCardNumber = 1) ifTrue: [^'1|Tarjeta_sin_credito'].
+	(aCardNumber = 2) ifTrue: [^'1|Tarjeta_robada'].
+	(aCardNumber = 3) ifTrue: [^'1|Tarjeta_expirada'].
+	^'0|0001'! !
 
 
 !classDefinition: #TestFactory category: #TusLibros!
@@ -306,21 +474,61 @@ Object subclass: #TestFactory
 TestFactory class
 	instanceVariableNames: ''!
 
-!TestFactory class methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 12:22:08'!
-emptyCart
-	^Cart new.! !
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:14:16'!
+catalogABC123
+	|diccionario|
+	diccionario := Dictionary new.
+	diccionario at: 'A' put: 1.
+	diccionario at: 'B' put: 2.
+	diccionario at: 'C' put: 3.
+	^diccionario! !
 
-!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 16:37:04'!
-expiredCard
-	^Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2010)! !
-
-!TestFactory class methodsFor: 'as yet unclassified' stamp: 'cLI 11/4/2017 13:33:48'!
-fullCart
-	| carrito |
-	carrito :=Cart withCatalog: #('123' '133' '7565').
-	carrito add: 4 item: '123'.
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:37:47'!
+diferentCatalogCart
+	| carrito catalogo|
+	catalogo := Dictionary new.
+	catalogo at: 'A' put: 1.
+	carrito :=Cart withCatalog: catalogo.
+	carrito add: 4 item: 'A'.
 	^carrito.! !
 
-!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/4/2017 16:12:52'!
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:20:24'!
+emptyCart
+	^Cart withCatalog: TestFactory catalogABC123.! !
+
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:45'!
+expiredCard
+	^Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2010) number: 1234! !
+
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:31:20'!
+fullCart
+	| carrito |
+	carrito :=Cart withCatalog: TestFactory catalogABC123.
+	carrito add: 4 item: 'A'.
+	^carrito.! !
+
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:40'!
 notExpiredCard
-	^Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022)! !
+	^Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022) number: 1234! !
+
+
+!classDefinition: #ThreeOPTimer category: #TusLibros!
+Object subclass: #ThreeOPTimer
+	instanceVariableNames: 'array timesCalled'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!ThreeOPTimer methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:37:00'!
+getTime
+	timesCalled := timesCalled +1.
+	^ array at: timesCalled. ! !
+
+!ThreeOPTimer methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:35:54'!
+initialize
+	array := OrderedCollection new.
+	array add: (Time hour: 10 minute: 00  second: 00).
+	array add: (Time hour: 10 minute:25  second: 00).
+	array add: (Time hour: 10 minute:30  second: 00).
+	array add: (Time hour: 11 minute:30  second: 00).
+	timesCalled := 0! !
