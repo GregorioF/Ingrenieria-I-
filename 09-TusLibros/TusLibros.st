@@ -321,6 +321,14 @@ test09CheckoutExpiredCardShouldntRiseTheReturnException
 	! !
 
 
+!classDefinition: #ClientsTest category: #TusLibros!
+TestCase subclass: #ClientsTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+
 !classDefinition: #InterfazTest category: #TusLibros!
 TestCase subclass: #InterfazTest
 	instanceVariableNames: ''
@@ -387,7 +395,7 @@ test05ListCartReturnsTheCartList
 	self assert: [ (interfaz listCart: 1) = (carts carts at:1) items]
 	! !
 
-!InterfazTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:30:44'!
+!InterfazTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:54:08'!
 test06CheckoutCartReturnsPurchaseID
 	| interfaz carts |
 	carts := TestFactory fullCartManager.
@@ -395,7 +403,7 @@ test06CheckoutCartReturnsPurchaseID
 		clerk: TestFactory basicClerk 
 		users: TestFactory userBase.
 	
-	self assert: [ (interfaz checkoutCart: 1 card: 1234 expires: (Date newDay: 01 month: 11 year: 2022) owner: 'Luis') = '0001']
+	self assert: [ (interfaz checkoutCart: 1 card: 1234 expires: (Date newDay: 01 month: 11 year: 2022) owner: 'Test') = '0001']
 	! !
 
 
@@ -466,7 +474,7 @@ add: aQuantity item: anISBN
 catalog
 	^catalog! !
 
-!Cart methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 16:35:58'!
+!Cart methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:44:02'!
 initializeWithCatalog: aCatalog 
 	items := Dictionary new.
 	catalog := aCatalog.! !
@@ -570,12 +578,12 @@ withCatalog: aCatalog timer: aTimer
 
 !classDefinition: #Clerk category: #TusLibros!
 Object subclass: #Clerk
-	instanceVariableNames: 'date catalog processor'
+	instanceVariableNames: 'date catalog processor clients'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:21:15'!
+!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:51:10'!
 checkout: aCart with: aCard 
 	|value id|
 	(aCart isEmpty) ifTrue: [self error: Clerk emptyCartOnCheckoutMessage].
@@ -585,7 +593,14 @@ checkout: aCart with: aCard
 	id := processor debitCard: (aCard number) expiration: (aCard expiration) owner: (aCard owner) amount: value.
 	
 	id := id findTokens:'|'.
-	((id at: 1) = '0') ifTrue: [^id at: 2.].
+	((id at: 1) = '0') ifTrue: [
+		(clients purchasesOf: aCard owner) addLast: (aCart items).
+		
+		^id at: 2.
+		
+		
+		
+		].
 	((id at: 2) = 'Tarjeta_perdida') ifTrue: [self error: Clerk lostCardReturnMessage].
 	((id at: 2) = 'Tarjeta_sin_credito') ifTrue: [self error: Clerk noCreditReturnMessage].
 	((id at: 2) = 'Tarjeta_expirada') ifTrue: [self error: Clerk expiredCardReturnMessage].
@@ -598,11 +613,12 @@ valueOf: aCart
 	aCart items keysAndValuesDo: [:aKey :aValue | suma := suma + (catalog at: aKey) * aValue].
 	^suma! !
 
-!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 14:56:03'!
+!Clerk methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:52:09'!
 withDate: aDate catalog: aCatalog merchantProcessor: aProcessor
 	date := aDate.
 	catalog := aCatalog.
-	processor := aProcessor.! !
+	processor := aProcessor.
+	clients := TestFactory userBase.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -654,16 +670,16 @@ Object subclass: #Clients
 	poolDictionaries: ''
 	category: 'TusLibros'!
 
-!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:48:50'!
+!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:45:18'!
 add: aClient withPassword: aPassword 
 	clients at: aClient put: aPassword.
-	purchases at: aClient put: Bag new.! !
+	purchases at: aClient put: OrderedCollection new.! !
 
 !Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:36:01'!
 client: clientId hasPassword: aPassword
 	^(clients at: clientId ifAbsent:[self error: Clients noSuchClientMessage]) = aPassword! !
 
-!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:45:59'!
+!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:50:35'!
 initialize
 	clients := Dictionary new.
 	purchases := Dictionary new.! !
@@ -672,9 +688,19 @@ initialize
 purchases
 	^purchases! !
 
-!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:45:24'!
+!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:53:39'!
 purchasesOf: aString 
-	purchases at: aString.! !
+	^purchases at: aString.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Clients class' category: #TusLibros!
+Clients class
+	instanceVariableNames: ''!
+
+!Clients class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:46:15'!
+noSuchClientMessage
+	^'El cliente no se encuentra registrado'! !
 
 
 !classDefinition: #Interfaz category: #TusLibros!
@@ -841,9 +867,9 @@ lostCard
 				year: 2022)
 		number: 2.! !
 
-!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:40'!
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:52:59'!
 notExpiredCard
-	^Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022) number: 1234! !
+	^Card newFor: 'Test' expires: (Date newDay: 01 month: 11 year: 2022) number: 1234! !
 
 !TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:31:28'!
 userBase
