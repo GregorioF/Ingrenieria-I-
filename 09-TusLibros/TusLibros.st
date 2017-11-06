@@ -321,6 +321,84 @@ test09CheckoutExpiredCardShouldntRiseTheReturnException
 	! !
 
 
+!classDefinition: #InterfazTest category: #TusLibros!
+TestCase subclass: #InterfazTest
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!InterfazTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:26:37'!
+test01ListPurchasesFailsOnIncorrectPassword
+	| interfaz|
+	
+	interfaz := Interfaz carts: TestFactory fullCartManager 
+		clerk: TestFactory basicClerk 
+		users: TestFactory userBase.
+	
+	self should: [interfaz listPurchasesFor: 'Test' password: 'NotTest'] 
+		raise:  Error - MessageNotUnderstood 
+		withExceptionDo: [ :error |
+			self assert: Interfaz incorrectPasswordMessage = error messageText ].
+	! !
+
+!InterfazTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:51:07'!
+test02ListPurchasesReturnsPurchasesOnCorrectPassword
+	| interfaz users |
+	users := TestFactory userBase.
+	interfaz := Interfaz carts: TestFactory fullCartManager 
+		clerk: TestFactory basicClerk 
+		users: users.
+	
+	self assert: [(interfaz listPurchasesFor: 'Test' password: 'Test') = (users purchasesOf: 'Test')]
+	! !
+
+!InterfazTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:10:50'!
+test03AddToCartAddsItemsToTheCart
+	| interfaz carts |
+	carts := TestFactory fullCartManager.
+	interfaz := Interfaz carts: carts
+		clerk: TestFactory basicClerk 
+		users: TestFactory userBase.
+	
+	interfaz addToCart: 1 bookISBN:  'A' bookQuantity: 3.
+	self assert: [ 5 = ((carts carts at: 1) items at:'A')]
+	! !
+
+!InterfazTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:26:32'!
+test04CreateCartReturnsAnID
+	| interfaz carts |
+	carts := TestFactory fullCartManager.
+	interfaz := Interfaz carts: carts
+		clerk: TestFactory basicClerk 
+		users: TestFactory userBase.
+	
+	self assert: [ (interfaz createCartFor: 'Test' password: 'Test') = 2]
+	! !
+
+!InterfazTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:21:09'!
+test05ListCartReturnsTheCartList
+	| interfaz carts |
+	carts := TestFactory fullCartManager.
+	interfaz := Interfaz carts: carts
+		clerk: TestFactory basicClerk 
+		users: TestFactory userBase.
+	
+	self assert: [ (interfaz listCart: 1) = (carts carts at:1) items]
+	! !
+
+!InterfazTest methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:30:44'!
+test06CheckoutCartReturnsPurchaseID
+	| interfaz carts |
+	carts := TestFactory fullCartManager.
+	interfaz := Interfaz carts: carts
+		clerk: TestFactory basicClerk 
+		users: TestFactory userBase.
+	
+	self assert: [ (interfaz checkoutCart: 1 card: 1234 expires: (Date newDay: 01 month: 11 year: 2022) owner: 'Luis') = '0001']
+	! !
+
+
 !classDefinition: #Card category: #TusLibros!
 Object subclass: #Card
 	instanceVariableNames: 'expiration owner number'
@@ -442,6 +520,10 @@ createCart
 	carts at: id put: (Cart withCatalog: catalog).
 	lastUses at: id put: (timer getTime).
 	^id! !
+
+!CartManager methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:24:02'!
+listCart: aCart
+	^(carts at: aCart) items! !
 
 !CartManager methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 22:55:11'!
 makeCart: anId do: aBlockClosure 
@@ -565,6 +647,90 @@ withDate: aDate catalog: aDictionary merchantProcessor: aMerchProcSim
 	^self new withDate: aDate catalog: aDictionary merchantProcessor: aMerchProcSim ! !
 
 
+!classDefinition: #Clients category: #TusLibros!
+Object subclass: #Clients
+	instanceVariableNames: 'passwords sells clients purchases'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:48:50'!
+add: aClient withPassword: aPassword 
+	clients at: aClient put: aPassword.
+	purchases at: aClient put: Bag new.! !
+
+!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:36:01'!
+client: clientId hasPassword: aPassword
+	^(clients at: clientId ifAbsent:[self error: Clients noSuchClientMessage]) = aPassword! !
+
+!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:45:59'!
+initialize
+	clients := Dictionary new.
+	purchases := Dictionary new.! !
+
+!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:49:11'!
+purchases
+	^purchases! !
+
+!Clients methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:45:24'!
+purchasesOf: aString 
+	purchases at: aString.! !
+
+
+!classDefinition: #Interfaz category: #TusLibros!
+Object subclass: #Interfaz
+	instanceVariableNames: 'carts clerk users'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!Interfaz methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:06:55'!
+addToCart: aCartId bookISBN: aISBN bookQuantity: aBookQuantity
+	carts makeCart: aCartId do: [:aCart| aCart add: aBookQuantity item: aISBN ]! !
+
+!Interfaz methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:32:06'!
+carts: aCartManager clerk: aClerk users: aUsersDictionary
+	carts := aCartManager.
+	clerk := aClerk.
+	users := aUsersDictionary.
+	! !
+
+!Interfaz methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:36:38'!
+checkoutCart: aCartId card: idTarjeta expires: adate owner: aOwner
+	|tarjeta carrito|
+	tarjeta := Card newFor: aOwner  expires: adate  number: idTarjeta.
+	carrito := carts carts at: aCartId.
+	^clerk checkout: carrito with: tarjeta! !
+
+!Interfaz methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:17:58'!
+createCartFor: aClientId password: aPassword 
+	(users client: aClientId hasPassword: aPassword) ifFalse: [self error: Interfaz incorrectPasswordMessage].
+	^carts createCart.! !
+
+!Interfaz methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 17:24:16'!
+listCart: aCartId
+	^carts listCart: aCartId! !
+
+!Interfaz methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:49:55'!
+listPurchasesFor: aClientId password: aPassword
+	(users client: aClientId hasPassword: aPassword) ifFalse: [self error: Interfaz incorrectPasswordMessage].
+	^users purchasesOf: aClientId. ! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Interfaz class' category: #TusLibros!
+Interfaz class
+	instanceVariableNames: ''!
+
+!Interfaz class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:30:37'!
+carts: aCartManager clerk: aClerk users: aClass 
+	^self new carts: aCartManager clerk: aClerk users: aClass ! !
+
+!Interfaz class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:41:30'!
+incorrectPasswordMessage
+	^ 'La contraseña ingresada es incorrecta'.! !
+
+
 !classDefinition: #MerchProcSim category: #TusLibros!
 Object subclass: #MerchProcSim
 	instanceVariableNames: ''
@@ -580,6 +746,18 @@ debitCard: aCardNumber expiration: aCardExpiration owner: aCardOwner amount: anA
 	^'0|0001'! !
 
 
+!classDefinition: #StopedTimer category: #TusLibros!
+Object subclass: #StopedTimer
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros'!
+
+!StopedTimer methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:18:12'!
+getTime
+	^Time hour: 10 minute: 00  second: 00! !
+
+
 !classDefinition: #TestFactory category: #TusLibros!
 Object subclass: #TestFactory
 	instanceVariableNames: ''
@@ -592,6 +770,12 @@ Object subclass: #TestFactory
 !classDefinition: 'TestFactory class' category: #TusLibros!
 TestFactory class
 	instanceVariableNames: ''!
+
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:15:58'!
+basicClerk
+	^Clerk withDate: (Date newDay: 1 month: 11 year: 2017) 
+		catalog: TestFactory catalogABC123 
+		merchantProcessor: MerchProcSim new.! !
 
 !TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 17:14:16'!
 catalogABC123
@@ -637,6 +821,15 @@ fullCart
 	carrito add: 4 item: 'A'.
 	^carrito.! !
 
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:20:14'!
+fullCartManager
+|cartManager id |
+	cartManager := CartManager withCatalog: (TestFactory catalogABC123) timer: StopedTimer.
+	id := cartManager createCart.
+	cartManager makeCart: id do: [:aCart | aCart add: 2 item: 'A'].
+	cartManager makeCart: id do: [:aCart | aCart add: 2 item: 'B'].
+	^cartManager! !
+
 !TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 15:08:40'!
 lostCard
 	^ Card
@@ -651,6 +844,13 @@ lostCard
 !TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/5/2017 18:56:40'!
 notExpiredCard
 	^Card newFor: 'Luis' expires: (Date newDay: 01 month: 11 year: 2022) number: 1234! !
+
+!TestFactory class methodsFor: 'as yet unclassified' stamp: 'Lic 11/6/2017 16:31:28'!
+userBase
+	| clients |
+	clients := Clients new.
+	clients add: 'Test' withPassword: 'Test'.
+	^clients! !
 
 
 !classDefinition: #ThreeOPTimer category: #TusLibros!
